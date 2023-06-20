@@ -6,7 +6,9 @@ use momentor::MainPlugin;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
+        .add_plugins(DefaultPlugins
+            .set(ImagePlugin::default_nearest())
+            .set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Momentor".to_string(),
                 resolution: (1920., 1080.).into(),
