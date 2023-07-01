@@ -1,6 +1,6 @@
 use bevy::app::{App, Plugin};
-use bevy_pixel_camera::{PixelCameraBundle, PixelCameraPlugin};
 use bevy::prelude::Commands;
+use bevy_pixel_camera::{PixelCameraBundle, PixelCameraPlugin};
 
 pub struct CameraPlugin;
 
@@ -14,5 +14,5 @@ impl Plugin for CameraPlugin {
 }
 
 fn setup_camera(mut commands: Commands) {
-    commands.spawn(PixelCameraBundle::from_zoom(2));
+    commands.spawn(PixelCameraBundle::from_zoom(4));
 }

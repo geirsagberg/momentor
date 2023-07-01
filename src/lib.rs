@@ -6,10 +6,12 @@ use bevy::sprite::{Material2d, Material2dPlugin, MaterialMesh2dBundle};
 use assets::LoadingPlugin;
 use background::BackgroundPlugin;
 use camera::CameraPlugin;
+use music::MusicPlugin;
 
 mod assets;
 mod camera;
 mod background;
+mod music;
 
 pub struct MainPlugin;
 
@@ -21,11 +23,11 @@ impl Plugin for MainPlugin {
             .add_plugin(LoadingPlugin)
             .add_plugin(CameraPlugin)
             .add_plugin(BackgroundPlugin)
+            .add_plugin(MusicPlugin)
             .add_system(spawn_platforms.in_schedule(OnEnter(GameState::Playing)))
         ;
     }
 }
-
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States)]
 pub enum GameState {
