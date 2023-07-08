@@ -1,6 +1,7 @@
 use bevy::app::{App, Plugin};
 use bevy::prelude::{Commands, default, Image, IntoSystemAppConfig, Mesh, OnEnter, Res, ResMut, SpriteBundle, Transform};
 use bevy::asset::{Assets, Handle};
+use bevy::math::Vec3;
 use bevy::sprite::{Material2d, Material2dPlugin, MaterialMesh2dBundle, Mesh2dHandle};
 use bevy::prelude::shape::Quad;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef};
