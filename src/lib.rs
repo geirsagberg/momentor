@@ -33,7 +33,8 @@ impl Plugin for MainPlugin {
                 AnimationPlugin,
                 //MusicPlugin
             ))
-            .add_systems(OnEnter(GameState::Playing), spawn_platforms);
+            .add_systems(OnEnter(GameState::Playing), spawn_platforms)
+            .add_systems(Update, rotate_platforms);
     }
 }
 
@@ -104,17 +105,30 @@ impl Material2d for ScreenSpaceMaterial {
     }
 }
 
+#[derive(Component)]
+struct Platform;
+
 fn spawn_platforms(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: meshes
-            .add(Mesh::from(shape::Quad::new(Vec2::new(128., 8.))))
-            .into(),
-        material: materials.add(ColorMaterial::from(Color::BLACK)),
-        transform: Transform::from_xyz(-100., -100., 1.).with_rotation(Quat::from_rotation_z(0.1)),
-        ..default()
-    });
+    commands.spawn((
+        MaterialMesh2dBundle {
+            mesh: meshes
+                .add(Mesh::from(shape::Quad::new(Vec2::new(128., 8.))))
+                .into(),
+            material: materials.add(ColorMaterial::from(Color::BLACK)),
+            transform: Transform::from_xyz(-100., -100., 1.)
+                .with_rotation(Quat::from_rotation_z(0.1)),
+            ..default()
+        },
+        Platform,
+    ));
+}
+
+fn rotate_platforms(time: Res<Time>, mut query: Query<&mut Transform, With<Platform>>) {
+    for mut transform in query.iter_mut() {
+        transform.rotate(Quat::from_rotation_z(time.delta_seconds() * 0.5));
+    }
 }
