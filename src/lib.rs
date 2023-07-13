@@ -1,41 +1,39 @@
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef};
-use bevy::sprite::{Anchor, Material2d, Material2dPlugin, MaterialMesh2dBundle};
-use bevy_rapier2d::prelude::*;
+use bevy::sprite::{Material2d, Material2dPlugin, MaterialMesh2dBundle};
 use leafwing_input_manager::prelude::*;
 
 use assets::LoadingPlugin;
 use background::BackgroundPlugin;
 use camera::CameraPlugin;
-use music::MusicPlugin;
 
 use crate::animation::{Animation, AnimationPlugin};
 use crate::assets::TextureAssets;
 use crate::atlas_data::AnimationSpriteSheetMeta;
 
-mod atlas_data;
 mod animation;
 mod assets;
-mod camera;
+mod atlas_data;
 mod background;
+mod camera;
 mod music;
 
 pub struct MainPlugin;
 
 impl Plugin for MainPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_state::<GameState>()
-            .add_plugin(Material2dPlugin::<ScreenSpaceMaterial>::default())
-            .add_plugin(LoadingPlugin)
-            .add_plugin(CameraPlugin)
-            .add_plugin(BackgroundPlugin)
-            // .add_plugin(MusicPlugin)
-            .add_plugin(PlayerPlugin)
-            .add_plugin(AnimationPlugin)
-            .add_system(spawn_platforms.in_schedule(OnEnter(GameState::Playing)))
-        ;
+        app.add_state::<GameState>()
+            .add_plugins((
+                Material2dPlugin::<ScreenSpaceMaterial>::default(),
+                LoadingPlugin,
+                CameraPlugin,
+                BackgroundPlugin,
+                PlayerPlugin,
+                AnimationPlugin,
+                //MusicPlugin
+            ))
+            .add_systems(OnEnter(GameState::Playing), spawn_platforms);
     }
 }
 
@@ -43,14 +41,12 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_plugin(InputManagerPlugin::<PlayerAction>::default())
-            .add_system(spawn_player.in_schedule(OnEnter(GameState::Playing)))
-        ;
+        app.add_plugins(InputManagerPlugin::<PlayerAction>::default())
+            .add_systems(OnEnter(GameState::Playing), spawn_player);
     }
 }
 
-#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug)]
+#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
 enum PlayerAction {
     Move,
     Aim,
@@ -58,8 +54,11 @@ enum PlayerAction {
     Shoot,
 }
 
-fn spawn_player(mut commands: Commands,
-                textures: Res<TextureAssets>, animated_sprite_sheet_assets: Res<Assets<AnimationSpriteSheetMeta>>) {
+fn spawn_player(
+    mut commands: Commands,
+    textures: Res<TextureAssets>,
+    animated_sprite_sheet_assets: Res<Assets<AnimationSpriteSheetMeta>>,
+) {
     let cyborg = animated_sprite_sheet_assets.get(&textures.cyborg).unwrap();
     let mut animation = Animation::new(cyborg.animation_frame_duration, cyborg.animations.clone());
     animation.play("idle", true);
@@ -91,7 +90,7 @@ pub enum GameState {
     Playing,
 }
 
-#[derive(AsBindGroup, TypeUuid, Debug, Clone)]
+#[derive(AsBindGroup, TypeUuid, Debug, Clone, Reflect)]
 #[uuid = "499a11e9-7a0e-4476-b890-a90c8bf2e19a"]
 pub struct ScreenSpaceMaterial {
     #[texture(0)]
@@ -105,13 +104,17 @@ impl Material2d for ScreenSpaceMaterial {
     }
 }
 
-fn spawn_platforms(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(
-        MaterialMesh2dBundle {
-            mesh: meshes.add(Mesh::from(shape::Quad::new(Vec2::new(128., 8.)))).into(),
-            material: materials.add(ColorMaterial::from(Color::BLACK)),
-            transform: Transform::from_xyz(-100., -100., 1.).with_rotation(Quat::from_rotation_z(0.1)),
-            ..default()
-        }
-    );
+fn spawn_platforms(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+    commands.spawn(MaterialMesh2dBundle {
+        mesh: meshes
+            .add(Mesh::from(shape::Quad::new(Vec2::new(128., 8.))))
+            .into(),
+        material: materials.add(ColorMaterial::from(Color::BLACK)),
+        transform: Transform::from_xyz(-100., -100., 1.).with_rotation(Quat::from_rotation_z(0.1)),
+        ..default()
+    });
 }

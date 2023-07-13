@@ -10,7 +10,7 @@ use serde::Deserialize;
 
 use crate::animation::Clip;
 
-#[derive(TypeUuid, Debug, Clone, Deserialize)]
+#[derive(TypeUuid, Debug, Clone, Deserialize, Reflect)]
 #[uuid = "079be8bd-9044-4d0a-beda-88edb139b5bf"]
 pub struct AnimationSpriteSheetMeta {
     pub image: String,

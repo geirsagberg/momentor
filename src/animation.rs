@@ -8,11 +8,11 @@ pub struct AnimationPlugin;
 
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(animation_cycling);
+        app.add_systems(Update, animation_cycling);
     }
 }
 
-#[derive(serde::Deserialize, Clone, Debug)]
+#[derive(serde::Deserialize, Clone, Debug, Reflect)]
 #[serde(deny_unknown_fields)]
 pub struct Clip {
     #[serde(deserialize_with = "deserialize_range_from_array")]
@@ -22,8 +22,8 @@ pub struct Clip {
 }
 
 fn deserialize_range_from_array<'de, D>(de: D) -> Result<Range<usize>, D::Error>
-    where
-        D: Deserializer<'de>,
+where
+    D: Deserializer<'de>,
 {
     de.deserialize_tuple(2, RangeVisitor)
 }
@@ -38,8 +38,8 @@ impl<'de> serde::de::Visitor<'de> for RangeVisitor {
     }
 
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-        where
-            A: SeqAccess<'de>,
+    where
+        A: SeqAccess<'de>,
     {
         let start: usize = if let Some(start) = seq.next_element()? {
             start
