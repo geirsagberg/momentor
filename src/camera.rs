@@ -1,3 +1,4 @@
+use crate::world::{CENTER_X, CENTER_Y};
 use bevy::app::{App, Plugin};
 use bevy::prelude::*;
 use bevy::render::camera::RenderTarget;
@@ -54,6 +55,7 @@ fn setup_camera(
                 target: RenderTarget::Image(image_handle.clone()),
                 ..default()
             },
+            transform: Transform::from_xyz(CENTER_X, CENTER_Y, 1000. - 0.1),
             ..default()
         });
 

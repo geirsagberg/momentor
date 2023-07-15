@@ -1,3 +1,5 @@
+#![allow(unused_parens)]
+
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use bevy_rapier2d::prelude::*;
