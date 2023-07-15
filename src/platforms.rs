@@ -28,24 +28,47 @@ fn spawn_platforms(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    commands.spawn((
-        MaterialMesh2dBundle {
-            mesh: meshes
-                .add(Mesh::from(shape::Quad::new(Vec2::new(128., 8.))))
-                .into(),
-            material: materials.add(ColorMaterial::from(Color::BLACK)),
-            transform: Transform::from_xyz(CENTER_X, CENTER_Y - 100., 1.)
-                .with_rotation(Quat::from_rotation_z(0.1)),
-            ..default()
-        },
-        RigidBody::KinematicVelocityBased,
-        Collider::cuboid(64., 4.),
+    let mut platform = |size: Vec2,
+                        center: Vec2|
+     -> (
+        MaterialMesh2dBundle<ColorMaterial>,
+        RigidBody,
+        Collider,
         Platform,
+    ) {
+        (
+            MaterialMesh2dBundle {
+                mesh: meshes.add(Mesh::from(shape::Quad::new(size))).into(),
+                material: materials.add(ColorMaterial::from(Color::BLACK)),
+                transform: Transform::from_xyz(center.x, center.y, 1.),
+                ..default()
+            },
+            RigidBody::KinematicVelocityBased,
+            Collider::cuboid(size.x / 2., size.y / 2.),
+            Platform,
+        )
+    };
+
+    commands.spawn(platform(
+        Vec2::new(128., 8.),
+        Vec2::new(CENTER_X, CENTER_Y - 100.),
+    ));
+    commands.spawn(platform(
+        Vec2::new(128., 8.),
+        Vec2::new(CENTER_X + 100., CENTER_Y + 100.),
     ));
 }
 
-fn rotate_platforms(time: Res<Time>, mut query: Query<&mut Transform, With<Platform>>) {
-    for mut transform in query.iter_mut() {
-        transform.rotate(Quat::from_rotation_z(time.delta_seconds() * 0.5));
+#[derive(Component)]
+pub struct Rotating {
+    pub speed: f32,
+}
+
+fn rotate_platforms(
+    time: Res<Time>,
+    mut query: Query<(&mut Transform, &Rotating), With<Platform>>,
+) {
+    for (mut transform, rotating) in query.iter_mut() {
+        transform.rotate(Quat::from_rotation_z(time.delta_seconds() * rotating.speed));
     }
 }

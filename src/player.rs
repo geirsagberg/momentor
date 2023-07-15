@@ -9,7 +9,6 @@ use leafwing_input_manager::axislike::VirtualDPad;
 use leafwing_input_manager::input_map::InputMap;
 use leafwing_input_manager::plugin::InputManagerPlugin;
 use leafwing_input_manager::{Actionlike, InputManagerBundle};
-use std::cmp::max;
 
 use crate::animation::Animation;
 use crate::assets::TextureAssets;
@@ -55,8 +54,8 @@ fn move_character(
             .map(|it| it.effective_translation)
             .unwrap_or_default();
 
-        let x = (translation.x + axis_pair.x() * speed);
-        let y = (translation.y - 0.1).clamp(-5., 5.);
+        let x = axis_pair.x() * speed;
+        let y = (translation.y - 0.01).max(-3.);
         controller.translation = Some(Vec2::new(x, y));
     }
 }
