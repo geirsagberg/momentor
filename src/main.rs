@@ -2,9 +2,14 @@
 
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
+use bevy_framepace::FramepacePlugin;
 use bevy_rapier2d::prelude::*;
 
 use momentor::MainPlugin;
+
+use crate::screen_diags::ScreenDiagsTextPlugin;
+
+mod screen_diags;
 
 fn main() {
     App::new()
@@ -21,6 +26,8 @@ fn main() {
                 }),
         )
         .add_plugins((
+            FramepacePlugin,
+            ScreenDiagsTextPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
             RapierDebugRenderPlugin::default().disabled(),
             EguiPlugin,

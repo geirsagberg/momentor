@@ -55,7 +55,7 @@ fn move_character(
             .unwrap_or_default();
 
         let x = axis_pair.x() * speed;
-        let y = (translation.y - 0.01).max(-3.);
+        let y = (translation.y - 0.1).max(-3.);
         controller.translation = Some(Vec2::new(x, y));
     }
 }
@@ -89,7 +89,7 @@ fn spawn_player(
             input_map,
         },
         RigidBody::KinematicPositionBased,
-        Collider::capsule_y(8., 8.),
+        Collider::cuboid(8., 16.),
         KinematicCharacterController::default(),
     ));
 }

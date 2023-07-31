@@ -1,12 +1,9 @@
-use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::AsBindGroup;
-use bevy::sprite::{Material2d, Material2dPlugin};
-use leafwing_input_manager::prelude::*;
-
 use assets::LoadingPlugin;
 use background::BackgroundPlugin;
+use bevy::prelude::*;
+use bevy::sprite::{Material2d, Material2dPlugin};
 use camera::CameraPlugin;
+use debug::DebugPlugin;
 use materials::ScreenSpaceMaterial;
 use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
@@ -19,6 +16,7 @@ mod assets;
 mod atlas_data;
 mod background;
 mod camera;
+mod debug;
 mod materials;
 mod music;
 mod platforms;
@@ -45,6 +43,7 @@ impl Plugin for MainPlugin {
             AnimationPlugin,
             PlatformsPlugin,
             WorldPlugin,
+            DebugPlugin,
             //MusicPlugin
         ));
     }
