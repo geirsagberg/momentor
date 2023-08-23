@@ -1,4 +1,3 @@
-use crate::world::{CENTER_X, CENTER_Y};
 use bevy::app::{App, Plugin};
 use bevy::prelude::*;
 use bevy::render::camera::RenderTarget;
@@ -7,6 +6,8 @@ use bevy::render::render_resource::{
 };
 use bevy::render::view::RenderLayers;
 use bevy_pixel_camera::{PixelCameraBundle, PixelCameraPlugin};
+
+use crate::world::{CENTER_X, CENTER_Y};
 
 pub struct CameraPlugin;
 
@@ -70,6 +71,6 @@ fn setup_camera(
             render_layer,
         ));
 
-        commands.spawn((PixelCameraBundle::from_zoom(2), render_layer));
+        commands.spawn((PixelCameraBundle::from_zoom(1), render_layer));
     }
 }

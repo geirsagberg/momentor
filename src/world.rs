@@ -32,16 +32,16 @@ fn wrap_around_world(mut query: Query<(&mut Transform, &Collider)>, world: Res<G
         let width = size.x * 2.;
         let height = size.y * 2.;
 
-        if position.x > world.width + width {
-            transform.translation.x = 0. - width;
-        } else if position.x < 0. - width {
-            transform.translation.x = world.width + width;
+        if position.x > world.width {
+            transform.translation.x = 0.;
+        } else if position.x < 0. {
+            transform.translation.x = world.width;
         }
 
-        if position.y > world.height + height {
-            transform.translation.y = 0. - height;
-        } else if position.y < 0. - height {
-            transform.translation.y = world.height + height;
+        if position.y > world.height {
+            transform.translation.y = 0.;
+        } else if position.y < 0. {
+            transform.translation.y = world.height;
         }
     }
 }
