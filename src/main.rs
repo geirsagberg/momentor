@@ -1,8 +1,9 @@
 #![allow(unused_parens)]
 
 use bevy::prelude::*;
+use bevy::window::PresentMode;
 use bevy_egui::EguiPlugin;
-use bevy_framepace::FramepacePlugin;
+use bevy_framepace::{FramepacePlugin, FramepaceSettings};
 use bevy_rapier2d::prelude::*;
 
 use momentor::MainPlugin;
@@ -20,6 +21,7 @@ fn main() {
                     primary_window: Some(Window {
                         title: "Momentor".to_string(),
                         resolution: (1920., 1080.).into(),
+                        present_mode: PresentMode::AutoVsync,
                         ..default()
                     }),
                     ..default()
@@ -33,5 +35,9 @@ fn main() {
             EguiPlugin,
             MainPlugin,
         ))
+        .insert_resource(FramepaceSettings {
+            limiter: bevy_framepace::Limiter::from_framerate(60.),
+            ..Default::default()
+        })
         .run();
 }

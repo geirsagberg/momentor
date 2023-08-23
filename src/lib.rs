@@ -1,7 +1,7 @@
 use assets::LoadingPlugin;
 use background::BackgroundPlugin;
 use bevy::prelude::*;
-use bevy::sprite::{Material2d, Material2dPlugin};
+use bevy::sprite::Material2dPlugin;
 use camera::CameraPlugin;
 use debug::DebugPlugin;
 use materials::ScreenSpaceMaterial;

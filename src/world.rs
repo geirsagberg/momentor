@@ -1,7 +1,6 @@
 use bevy::app::{App, Plugin, Update};
-use bevy::prelude::{Component, Query, Res, Resource, Transform};
+use bevy::prelude::{Query, Res, Resource, Transform};
 use bevy_rapier2d::geometry::Collider;
-use bevy_rapier2d::parry::shape::Shape;
 
 pub struct WorldPlugin;
 
