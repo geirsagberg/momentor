@@ -4,8 +4,8 @@ use bevy::prelude::*;
 use bevy::window::PresentMode;
 use bevy_egui::EguiPlugin;
 use bevy_framepace::FramepacePlugin;
-use bevy_rapier2d::prelude::*;
 
+use bevy_xpbd_2d::prelude::PhysicsPlugins;
 use momentor::MainPlugin;
 
 fn main() {
@@ -25,10 +25,9 @@ fn main() {
         )
         .add_plugins((
             FramepacePlugin,
-            RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.),
-            RapierDebugRenderPlugin::default().disabled(),
             EguiPlugin,
             MainPlugin,
+            PhysicsPlugins::default(),
         ))
         .run();
 }

@@ -71,6 +71,6 @@ fn setup_camera(
             render_layer,
         ));
 
-        commands.spawn((PixelCameraBundle::from_zoom(1), render_layer));
+        commands.spawn((PixelCameraBundle::from_zoom(2), render_layer));
     }
 }

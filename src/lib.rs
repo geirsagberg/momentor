@@ -1,3 +1,5 @@
+#![allow(unused_parens)]
+
 use assets::LoadingPlugin;
 use background::BackgroundPlugin;
 use bevy::prelude::*;
@@ -16,6 +18,7 @@ mod assets;
 mod atlas_data;
 mod background;
 mod camera;
+mod components;
 mod debug;
 mod materials;
 mod music;

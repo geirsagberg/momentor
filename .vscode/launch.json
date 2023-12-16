@@ -7,25 +7,6 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug unit tests in library 'momentor'",
-      "cargo": {
-        "args": [
-          "test",
-          "--no-run",
-          "--lib",
-          "--package=momentor"
-        ],
-        "filter": {
-          "name": "momentor",
-          "kind": "lib"
-        }
-      },
-      "args": [],
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "type": "lldb",
-      "request": "launch",
       "name": "Debug executable 'momentor'",
       "cargo": {
         "args": [
@@ -39,25 +20,9 @@
         }
       },
       "args": [],
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "type": "lldb",
-      "request": "launch",
-      "name": "Debug unit tests in executable 'momentor'",
-      "cargo": {
-        "args": [
-          "test",
-          "--no-run",
-          "--bin=momentor",
-          "--package=momentor"
-        ],
-        "filter": {
-          "name": "momentor",
-          "kind": "bin"
-        }
+      "env": {
+        "CARGO_MANIFEST_DIR": "${workspaceFolder}"
       },
-      "args": [],
       "cwd": "${workspaceFolder}"
     }
   ]

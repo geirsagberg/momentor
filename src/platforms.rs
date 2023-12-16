@@ -6,7 +6,7 @@ use bevy::prelude::{
     Time, Transform, With,
 };
 use bevy::sprite::MaterialMesh2dBundle;
-use bevy_rapier2d::prelude::{Collider, RigidBody};
+use bevy_xpbd_2d::prelude::*;
 
 use crate::world::{CENTER_X, CENTER_Y};
 use crate::GameState;
@@ -43,14 +43,14 @@ fn spawn_platforms(
                 transform: Transform::from_xyz(center.x, center.y, 1.),
                 ..default()
             },
-            RigidBody::KinematicVelocityBased,
+            RigidBody::Static,
             Collider::cuboid(size.x / 2., size.y / 2.),
             Platform,
         )
     };
 
     commands.spawn(platform(
-        Vec2::new(128., 8.),
+        Vec2::new(512., 8.),
         Vec2::new(CENTER_X, CENTER_Y - 100.),
     ));
     commands.spawn(platform(

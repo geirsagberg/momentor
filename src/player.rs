@@ -1,9 +1,8 @@
-#![allow(unused_parens)]
-
 use bevy::app::{App, Plugin};
 use bevy::asset::Assets;
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
+use bevy::sprite::Anchor;
+use bevy_xpbd_2d::prelude::*;
 use leafwing_input_manager::action_state::ActionState;
 use leafwing_input_manager::axislike::VirtualDPad;
 use leafwing_input_manager::input_map::InputMap;
@@ -13,6 +12,7 @@ use leafwing_input_manager::{Actionlike, InputManagerBundle};
 use crate::animation::Animation;
 use crate::assets::TextureAssets;
 use crate::atlas_data::AnimationSpriteSheetMeta;
+use crate::components::facing::{Facing, FacingDirection};
 use crate::world::{CENTER_X, CENTER_Y};
 use crate::GameState;
 
@@ -22,7 +22,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(InputManagerPlugin::<PlayerAction>::default())
             .add_systems(OnEnter(GameState::Playing), spawn_player)
-            .add_systems(Update, move_character);
+            .add_systems(Update, (move_player, animate_player).chain());
     }
 }
 
@@ -34,29 +34,48 @@ enum PlayerAction {
     Shoot,
 }
 
-fn move_character(
-    mut query: Query<
-        (
-            &mut KinematicCharacterController,
-            Option<&KinematicCharacterControllerOutput>,
-            &ActionState<PlayerAction>,
-        ),
-        With<Player>,
-    >,
-) {
-    for (mut controller, output, action_state) in &mut query {
+fn animate_player(mut query: Query<(&mut Animation, &ActionState<PlayerAction>), With<Player>>) {
+    for (mut animation, action_state) in &mut query {
+        let axis_pair = action_state
+            .axis_pair(PlayerAction::Move)
+            .unwrap_or_default();
+        let x = axis_pair.x();
+        let y = axis_pair.y();
+
+        if let Some(anim) = &animation.current_animation {
+            match anim.as_str() {
+                "idle" => {
+                    if x != 0. || y != 0. {
+                        animation.play("run", true);
+                    }
+                }
+                "run" => {
+                    if x == 0. && y == 0. {
+                        animation.play("idle", true);
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+}
+
+fn move_player(mut query: Query<(&ActionState<PlayerAction>, &mut Facing), With<Player>>) {
+    for (action_state, mut facing) in &mut query {
         let axis_pair = action_state
             .axis_pair(PlayerAction::Move)
             .unwrap_or_default();
         let speed = 2.;
 
-        let translation = output
-            .map(|it| it.effective_translation)
-            .unwrap_or_default();
-
         let x = axis_pair.x() * speed;
-        let y = (translation.y - 0.1).max(-3.);
-        controller.translation = Some(Vec2::new(x, y));
+
+        if (x.abs() > 0.) {
+            if x < 0. && facing.direction == FacingDirection::Right {
+                facing.direction = FacingDirection::Left;
+            } else if x > 0. && facing.direction == FacingDirection::Left {
+                facing.direction = FacingDirection::Right;
+            }
+        }
     }
 }
 
@@ -81,6 +100,10 @@ fn spawn_player(
         SpriteSheetBundle {
             texture_atlas: cyborg.atlas_handle.clone(),
             transform: Transform::from_xyz(CENTER_X, CENTER_Y, 3.),
+            sprite: TextureAtlasSprite {
+                anchor: Anchor::Custom((0.0, -0.1).into()),
+                ..default()
+            },
             ..default()
         },
         animation,
@@ -88,8 +111,8 @@ fn spawn_player(
             action_state: ActionState::default(),
             input_map,
         },
-        RigidBody::KinematicPositionBased,
+        RigidBody::Dynamic,
         Collider::cuboid(8., 16.),
-        KinematicCharacterController::default(),
+        Facing::default(),
     ));
 }

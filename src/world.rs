@@ -1,6 +1,6 @@
 use bevy::app::{App, Plugin, Update};
 use bevy::prelude::{Query, Res, Resource, Transform};
-use bevy_rapier2d::geometry::Collider;
+use bevy_xpbd_2d::prelude::Collider;
 
 pub struct WorldPlugin;
 
@@ -28,20 +28,20 @@ impl Plugin for WorldPlugin {
 fn wrap_around_world(mut query: Query<(&mut Transform, &Collider)>, world: Res<GameWorld>) {
     for (mut transform, collider) in &mut query {
         let position = transform.translation;
-        let size = collider.raw.compute_local_aabb().half_extents();
+        let size = collider.compute_local_aabb().half_extents();
         let width = size.x * 2.;
         let height = size.y * 2.;
 
-        if position.x > world.width {
-            transform.translation.x = 0.;
-        } else if position.x < 0. {
-            transform.translation.x = world.width;
+        if position.x > world.width + width {
+            transform.translation.x = 0. - width;
+        } else if position.x < 0. - width {
+            transform.translation.x = world.width + width;
         }
 
-        if position.y > world.height {
-            transform.translation.y = 0.;
-        } else if position.y < 0. {
-            transform.translation.y = world.height;
+        if position.y > world.height + height {
+            transform.translation.y = 0. - height;
+        } else if position.y < 0. - height {
+            transform.translation.y = world.height + height;
         }
     }
 }

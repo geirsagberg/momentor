@@ -4,11 +4,31 @@ use bevy::{prelude::*, sprite::TextureAtlasSprite, utils::HashMap};
 use serde::de::SeqAccess;
 use serde::Deserializer;
 
+use crate::components::facing::{Facing, FacingDirection};
+
 pub struct AnimationPlugin;
 
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, animation_cycling);
+        app.add_systems(Update, (animation_cycling));
+        // app.add_systems(Update, flip_facing);
+        // app.add_systems(Render, reset_facing.in_set(RenderSet::Cleanup));
+    }
+}
+
+fn reset_facing(mut query: Query<(&mut Transform), With<Facing>>) {
+    for mut transform in &mut query {
+        transform.scale.x = 1.;
+    }
+}
+
+fn flip_facing(mut query: Query<(&mut Transform, &Facing)>) {
+    for (mut transform, facing) in &mut query {
+        transform.scale.x = if facing.direction == FacingDirection::Left {
+            -1.
+        } else {
+            1.
+        };
     }
 }
 

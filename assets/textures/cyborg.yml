@@ -7,11 +7,11 @@ animations:
   idle:
     frames: [0, 3]
     repeat: true
-  jumping:
+  jump:
     frames: [6, 9]
-  running:
+  run:
     frames: [12, 17]
     repeat: true
-  walking:
+  walk:
     frames: [24, 29]
     repeat: true
