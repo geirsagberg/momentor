@@ -25,7 +25,11 @@ fn spawn_background(
     mut materials: ResMut<Assets<ParallaxMaterial>>,
     images: Res<Assets<Image>>,
 ) {
-    let image_size = images.get(&texture_assets.background_1).unwrap().size();
+    let image_size = images
+        .get(&texture_assets.background_1)
+        .unwrap()
+        .size()
+        .as_vec2();
     let mesh: Mesh2dHandle = meshes.add(Mesh::from(Quad::new(image_size))).into();
 
     commands

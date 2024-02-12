@@ -7,6 +7,7 @@ use bevy::sprite::Material2dPlugin;
 use camera::CameraPlugin;
 use debug::DebugPlugin;
 use materials::ScreenSpaceMaterial;
+use music::MusicPlugin;
 use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 use world::WorldPlugin;
@@ -15,7 +16,6 @@ use crate::animation::AnimationPlugin;
 
 mod animation;
 mod assets;
-mod atlas_data;
 mod background;
 mod camera;
 mod components;
@@ -47,7 +47,7 @@ impl Plugin for MainPlugin {
             PlatformsPlugin,
             WorldPlugin,
             DebugPlugin,
-            //MusicPlugin
+            MusicPlugin,
         ));
     }
 }

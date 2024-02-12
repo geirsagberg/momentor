@@ -5,6 +5,7 @@ use bevy::window::PresentMode;
 use bevy_egui::EguiPlugin;
 use bevy_framepace::FramepacePlugin;
 
+use bevy_xpbd_2d::plugins::PhysicsDebugPlugin;
 use bevy_xpbd_2d::prelude::PhysicsPlugins;
 use momentor::MainPlugin;
 
@@ -28,6 +29,7 @@ fn main() {
             EguiPlugin,
             MainPlugin,
             PhysicsPlugins::default(),
+            PhysicsDebugPlugin::default(),
         ))
         .run();
 }

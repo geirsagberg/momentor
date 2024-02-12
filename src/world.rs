@@ -28,9 +28,13 @@ impl Plugin for WorldPlugin {
 fn wrap_around_world(mut query: Query<(&mut Transform, &Collider)>, world: Res<GameWorld>) {
     for (mut transform, collider) in &mut query {
         let position = transform.translation;
-        let size = collider.compute_local_aabb().half_extents();
-        let width = size.x * 2.;
-        let height = size.y * 2.;
+        let size = collider.compute_aabb(
+            position.truncate(),
+            transform.rotation.to_euler(bevy::math::EulerRot::ZYX).0,
+        );
+        let extends = size.0.extents();
+        let width = extends.x;
+        let height = extends.y;
 
         if position.x > world.width + width {
             transform.translation.x = 0. - width;

@@ -16,6 +16,6 @@ fn toggle_debug(
     keyboard_input: Res<Input<KeyCode>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::F1) {
-        rapier_context.render_aabbs = !rapier_context.render_aabbs;
+        rapier_context.enabled = !rapier_context.enabled;
     }
 }

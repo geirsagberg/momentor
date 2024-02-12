@@ -1,7 +1,7 @@
 use bevy::app::{App, Plugin};
-use bevy::asset::Assets;
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
+use bevy::utils::HashMap;
 use bevy_xpbd_2d::prelude::*;
 use leafwing_input_manager::action_state::ActionState;
 use leafwing_input_manager::axislike::VirtualDPad;
@@ -9,9 +9,8 @@ use leafwing_input_manager::input_map::InputMap;
 use leafwing_input_manager::plugin::InputManagerPlugin;
 use leafwing_input_manager::{Actionlike, InputManagerBundle};
 
-use crate::animation::Animation;
+use crate::animation::{Animation, Clip};
 use crate::assets::TextureAssets;
-use crate::atlas_data::AnimationSpriteSheetMeta;
 use crate::components::facing::{Facing, FacingDirection};
 use crate::world::{CENTER_X, CENTER_Y};
 use crate::GameState;
@@ -82,14 +81,40 @@ fn move_player(mut query: Query<(&ActionState<PlayerAction>, &mut Facing), With<
 #[derive(Component)]
 struct Player;
 
-fn spawn_player(
-    mut commands: Commands,
-    textures: Res<TextureAssets>,
-    animated_sprite_sheet_assets: Res<Assets<AnimationSpriteSheetMeta>>,
-) {
-    let cyborg = animated_sprite_sheet_assets.get(&textures.cyborg).unwrap();
-    let mut animation = Animation::new(cyborg.animation_frame_duration, cyborg.animations.clone());
-    animation.play("idle", true);
+fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
+    let animation = Animation::new(
+        0.12,
+        HashMap::from([
+            (
+                String::from("idle"),
+                Clip {
+                    frames: 0..3,
+                    repeat: true,
+                },
+            ),
+            (
+                String::from("jumping"),
+                Clip {
+                    frames: 6..9,
+                    repeat: false,
+                },
+            ),
+            (
+                String::from("running"),
+                Clip {
+                    frames: 12..17,
+                    repeat: true,
+                },
+            ),
+            (
+                String::from("walking"),
+                Clip {
+                    frames: 24..29,
+                    repeat: true,
+                },
+            ),
+        ]),
+    );
     let mut input_map = InputMap::default();
     input_map
         .insert(VirtualDPad::wasd(), PlayerAction::Move)
@@ -98,7 +123,7 @@ fn spawn_player(
     commands.spawn((
         Player,
         SpriteSheetBundle {
-            texture_atlas: cyborg.atlas_handle.clone(),
+            texture_atlas: textures.cyborg.clone(),
             transform: Transform::from_xyz(CENTER_X, CENTER_Y, 3.),
             sprite: TextureAtlasSprite {
                 anchor: Anchor::Custom((0.0, -0.1).into()),
@@ -112,7 +137,8 @@ fn spawn_player(
             input_map,
         },
         RigidBody::Dynamic,
-        Collider::cuboid(8., 16.),
+        Collider::cuboid(8., 32.),
+        LockedAxes::ROTATION_LOCKED,
         Facing::default(),
     ));
 }
